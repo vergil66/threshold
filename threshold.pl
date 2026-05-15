@@ -140,6 +140,15 @@ sub reflect_entry {
     return if $choice < 1 || $choice > @open_entries;
 
     my $entry = $open_entries[$choice - 1];
+    
+    print "\nPlanned Lesson\n";
+    print "--------------\n";
+    print "Period: $entry->{period}\n";
+    print "Section / Term: $entry->{section}\n" if $entry->{section};
+    print "Course: $entry->{course}\n";
+    print "Focus: $entry->{focus}\n";
+    print "Plan: $entry->{plan}\n";
+    print "Transition to notice: $entry->{transition}\n";
 
     print "\nAfter Class\n\n";
 
