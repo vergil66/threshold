@@ -52,16 +52,22 @@ sub add_entry {
 
     my $entry = {
         time       => localtime->hms,
-        period     => prompt("Period / Section"),
+        
+        period     => prompt("Period"),
+        section    => prompt("Section / Term"),
         course     => prompt("Course"),
-        focus      => prompt("Lesson focus"),
-        plan       => prompt("Basic plan"),
+        
+        focus      => prompt("Lesson focus / main movement"),
+        plan       => prompt("Basic plan / class sequence"),
+        
         transition => prompt("Transition moment to notice"),
-        engage     => prompt("Engage note"),
-        reduce     => prompt("Reduce note"),
-        persist    => prompt("Persist note"),
-        reflection => prompt("Reflection"),
-        followup   => prompt("Follow-up"),
+        
+        engage     => prompt("Engage — where did connection or attention happen?"),
+        reduce     => prompt("Reduce — what could be lighter or simpler?"),
+        persist    => prompt("Persist — what is worth continuing?"),
+        
+        reflection => prompt("Reflection — what actually happened?"),
+        followup   => prompt("Follow-up / next action"),
     };
 
     push @{ $day->{entries} }, $entry;
@@ -82,7 +88,9 @@ sub view_today {
     }
 
     for my $entry (@{ $day->{entries} }) {
-        print "[$entry->{time}] $entry->{period} — $entry->{course}\n";
+        print "[$entry->{time}] $entry->{period} — $entry->{course}";
+        print " ($entry->{section})" if $entry->{section};
+        print "\n";
         print "Focus: $entry->{focus}\n";
         print "Plan: $entry->{plan}\n";
         print "Transition: $entry->{transition}\n";
@@ -115,7 +123,9 @@ sub export_markdown {
     print $fh "# Threshold Daybook — $day->{date}\n\n";
 
     for my $entry (@{ $day->{entries} }) {
-        print $fh "## $entry->{period} — $entry->{course}\n\n";
+        print $fh "## $entry->{period} — $entry->{course}";
+        print $fh " ($entry->{section})" if $entry->{section};
+        print $fh "\n\n";
         print $fh "**Time:** $entry->{time}\n\n";
         print $fh "**Focus:** $entry->{focus}\n\n";
         print $fh "**Plan:** $entry->{plan}\n\n";

@@ -156,6 +156,22 @@ but discovering what reflective practices naturally persist.
 
 ---
 
+## v0.2 Notes
+
+This version clarifies the basic teaching entry structure.
+
+Key changes:
+- Split `Period` from `Section / Term`
+- Clarified prompt language around intention, attention, reflection, and follow-up
+- Established the before-class / after-class structure
+- Added roadmap notes for future defaults, config files, bell schedules, and observation cards
+
+Future roadmap:
+- Remember last-used Section / Term
+- Add config file for courses, terms, periods, and schedules
+- Add bell schedule support for sub plans and Today at a Glance
+- Add optional observation / metrics layer
+
 ## Early Prototype Commands
 
 Planned initial commands:
@@ -165,3 +181,86 @@ Planned initial commands:
 ./threshold.pl today
 ./threshold.pl week
 ./threshold.pl export
+
+ ## Roadmap Notes
+
+ ### Defaults and Configuration
+
+- Add a `section` / `term` field separate from `period`.
+- Remember the last-used value for `section` / `term` so repeated entries are faster.
+- Explore a future configuration file where users can define recurring defaults, such as:
+  - current term
+  - active courses
+  - periods
+  - sections
+  - recurring class schedule
+- Eventually allow the user to select from saved defaults rather than retyping common values.
+
+## Scheduling and Time Structure
+
+- Allow configurable period schedules.
+- Associate each period with:
+  - start time
+  - end time
+  - optional label
+- Support different schedules by:
+  - day of week
+  - semester
+  - special schedules
+  - block schedules
+- Allow a default schedule profile during setup.
+
+Examples:
+- Regular Monday-Friday
+- Block day
+- Delayed start
+- Exam schedule
+
+Future use cases:
+- automatic “Today at a Glance” generation
+- printable sub plans
+- pacing awareness
+- transition timing reflection
+- historical schedule context
+
+## Future Reflective Observation Layer
+
+Threshold may eventually include an optional observational
+or “metrics” layer separate from the primary reflective
+daybook structure.
+
+This layer would function similarly to the “expenses” layer
+inside Field Ledger:
+- supportive
+- secondary
+- selectively used
+- reflective rather than evaluative
+
+Potential uses:
+- teacher talk time
+- independent work time
+- transition efficiency
+- open vs closed questions
+- student-to-student interaction
+- wait time
+- classroom energy patterns
+- participation balance
+
+Possible inspirations:
+- John Hattie
+- Jim Knight instructional coaching tools
+- high-impact instructional practices
+- reflective coaching cycles
+
+The intent is not surveillance or scoring,
+but intentional noticing.
+
+Future versions may allow:
+- rotating weekly observation focuses
+- custom reflection metrics
+- observational “cards”
+- video-supported self-reflection
+- pattern review over time
+
+Threshold should preserve the primacy of human reflection
+while allowing selective observational support.
