@@ -1,4 +1,16 @@
+# Threshold runtime data
 data/
 exports/
-*.swp
+
+# Backup/testing folders
+archive-test-data/
+backup/
+
+# macOS
 .DS_Store
+
+# Vim
+*.swp
+
+# Perl/editor temp files
+*~
