@@ -61,11 +61,11 @@ sub prompt {
     return $input;
 }
 
-sub add_entry {
+sub plan_entry {
     my $day = load_day();
     
-    print "\nThreshold — Teaching Reflection Entry\n";
-    print "-------------------------------------\n";
+    print "\nThreshold — Plan Lesson Entry\n";
+    print "-----------------------------\n";
     print "Before Class\n\n";
     
     my $period     = prompt("Period");
@@ -74,17 +74,7 @@ sub add_entry {
     
     my $focus      = prompt("Lesson focus / main movement");
     my $plan       = prompt("Basic plan / class sequence");
-    
     my $transition = prompt("Transition moment to notice");
-    
-    print "\nAfter Class\n\n";
-    
-    my $engage     = prompt("Engage — where did connection or attention happen?");
-    my $reduce     = prompt("Reduce — what could be lighter or simpler?");
-    my $persist    = prompt("Persist — what is worth continuing?");
-    
-    my $reflection = multiline_prompt("Reflection — what actually happened?");
-    my $followup   = multiline_prompt("Follow-up / next action");
     
     my $entry = {
         time       => localtime->hms,
@@ -95,21 +85,71 @@ sub add_entry {
         
         focus      => $focus,
         plan       => $plan,
-        
         transition => $transition,
         
-        engage     => $engage,
-        reduce     => $reduce,
-        persist    => $persist,
+        engage     => "",
+        reduce     => "",
+        persist    => "",
+        reflection => "",
+        followup   => "",
         
-        reflection => $reflection,
-        followup   => $followup,
+        completed  => 0,
     };
     
     push @{ $day->{entries} }, $entry;
     save_day($day);
     
-    print "\nSaved entry for $course / $period.\n";
+    print "\nPlanned entry saved for $course / $period.\n";
+}
+
+sub reflect_entry {
+    my $day = load_day();
+    
+    my @open_entries = grep { !$_->{completed} } @{ $day->{entries} };
+    
+    unless (@open_entries) {
+        print "\nNo incomplete entries for today.\n";
+        return;
+    }
+    
+    print "\nThreshold — Reflection\n";
+    print "----------------------\n\n";
+    
+    for my $i (0 .. $#open_entries) {
+        my $e = $open_entries[$i];
+        
+        my $period  = $e->{period}  || "[no period]";
+        my $course  = $e->{course}  || "[no course]";
+        my $focus   = $e->{focus}   || "[no focus]";
+        my $section = $e->{section} || "";
+        
+        print ($i + 1);
+        print ". $period — $course";
+        print " ($section)" if $section;
+        print " | $focus";
+        print "\n";
+    }
+    
+    my $choice = prompt("Choose entry number");
+    
+    return unless $choice =~ /^\d+$/;
+    return if $choice < 1 || $choice > @open_entries;
+    
+    my $entry = $open_entries[$choice - 1];
+    
+    print "\nAfter Class\n\n";
+    
+    $entry->{engage}     = prompt("Engage — where did connection or attention happen?");
+    $entry->{reduce}     = prompt("Reduce — what could be lighter or simpler?");
+    $entry->{persist}    = prompt("Persist — what is worth continuing?");
+    $entry->{reflection} = multiline_prompt("Reflection — what actually happened?");
+    $entry->{followup}   = multiline_prompt("Follow-up / next action");
+    
+    $entry->{completed} = 1;
+    
+    save_day($day);
+    
+    print "\nReflection saved.\n";
 }
 
 sub view_today {
@@ -187,21 +227,24 @@ sub export_markdown {
 sub menu {
     print "\nThreshold Daybook\n";
     print "A classroom practice for noticing what changes in the room.\n\n";
-    print "1. Add teaching entry\n";
-    print "2. View today\n";
-    print "3. Weekly reflection\n";
-    print "4. Export markdown\n\n";
+    print "1. Plan lesson entry\n";
+    print "2. Reflect on lesson\n";
+    print "3. View today\n";
+    print "4. Weekly reflection\n";
+    print "5. Export markdown\n\n";
 
     my $choice = prompt("Choose");
 
-    if    ($choice eq "1") { add_entry(); }
-    elsif ($choice eq "2") { view_today(); }
-    elsif ($choice eq "3") { weekly_reflection(); }
-    elsif ($choice eq "4") { export_markdown(); }
+    if    ($choice eq "1") { plan_entry(); }
+    elsif ($choice eq "2") { reflect_entry(); }
+    elsif ($choice eq "3") { view_today(); }
+    elsif ($choice eq "4") { weekly_reflection(); }
+    elsif ($choice eq "5") { export_markdown(); }
     else { print "No action taken.\n"; }
 }
 
-if    ($command eq "add")     { add_entry(); }
+if    ($command eq "plan")    { plan_entry(); }
+elsif ($command eq "reflect") { reflect_entry(); }
 elsif ($command eq "today")   { view_today(); }
 elsif ($command eq "week")    { weekly_reflection(); }
 elsif ($command eq "export")  { export_markdown(); }
