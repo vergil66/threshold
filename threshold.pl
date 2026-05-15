@@ -177,10 +177,14 @@ sub view_day {
         return;
     }
 
-    for my $entry (@{ $day->{entries} }) {
+    for my $i (0 .. $#{ $day->{entries} }) {
+        my $entry = $day->{entries}->[$i];
         my $status = $entry->{completed} ? "Complete" : "Planned";
 
-        print "[$status] [$entry->{time}] $entry->{period} — $entry->{course}";
+        print ($i + 1) . ". ";
+        print "[$status] ";
+        print "[$entry->{time}] ";
+        print "$entry->{period} — $entry->{course}";
         print " ($entry->{section})" if $entry->{section};
         print "\n";
 
@@ -221,7 +225,8 @@ sub export_markdown {
 
     print $fh "# Threshold Daybook — $day->{date}\n\n";
 
-    for my $entry (@{ $day->{entries} }) {
+    for my $i (0 .. $#{ $day->{entries} }) {
+        my $entry = $day->{entries}->[$i];
         my $status = $entry->{completed} ? "Complete" : "Planned";
 
         print $fh "## $entry->{period} — $entry->{course}";
