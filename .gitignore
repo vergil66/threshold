@@ -1,0 +1,4 @@
+data/
+exports/
+*.swp
+.DS_Store
