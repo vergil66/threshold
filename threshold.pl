@@ -1,9 +1,36 @@
 #!/usr/bin/env perl
+
+# --------------------------------------------------
+# Threshold v0.5
+# A reflective classroom daybook for teachers.
+#
+# Threshold is part planner, part field notebook,
+# and part reflective teaching companion.
+#
+# Current Version Focus:
+# - Date-aware planning
+# - Before-class / after-class workflow
+# - Reflection and follow-up
+# - Markdown export
+#
+# Long-Term Direction:
+# - Configurable schedules and defaults
+# - Today-at-a-Glance dashboard
+# - Observation / metrics layer
+# - Transition to web version (v0.8)
+#
+# Part of the Vergil's Coffee Table ecosystem.
+# --------------------------------------------------
+
 use strict;
 use warnings;
 use JSON::PP;
 use Time::Piece;
 use File::Path qw(make_path);
+
+# --------------------------------------------------
+# DATA STORAGE
+# --------------------------------------------------
 
 my $DATA_DIR   = "data";
 my $EXPORT_DIR = "exports";
@@ -11,13 +38,25 @@ my $EXPORT_DIR = "exports";
 make_path($DATA_DIR);
 make_path($EXPORT_DIR);
 
+# --------------------------------------------------
+# COMMAND-LINE ARGUMENTS
+# --------------------------------------------------
+
 my $command = shift @ARGV || "menu";
 my $date    = shift @ARGV || localtime->ymd;
+
+# --------------------------------------------------
+# FILE HELPERS
+# --------------------------------------------------
 
 sub file_for_date {
     my ($date) = @_;
     return "$DATA_DIR/$date.json";
 }
+
+# --------------------------------------------------
+# LOAD / SAVE
+# --------------------------------------------------
 
 sub load_day {
     my ($date) = @_;
@@ -46,6 +85,10 @@ sub save_day {
     close $fh;
 }
 
+# --------------------------------------------------
+# PROMPTS
+# --------------------------------------------------
+
 sub prompt {
     my ($label) = @_;
     print "$label: ";
@@ -68,6 +111,10 @@ sub multiline_prompt {
     return join("\n", @lines);
 }
 
+# --------------------------------------------------
+# PLAN ENTRY — BEFORE CLASS
+# --------------------------------------------------
+
 sub plan_entry {
     my ($date) = @_;
     my $day = load_day($date);
@@ -85,17 +132,21 @@ sub plan_entry {
 
     my $entry = {
         time       => localtime->hms,
+
         period     => $period,
         section    => $section,
         course     => $course,
+
         focus      => $focus,
         plan       => $plan,
         transition => $transition,
+
         engage     => "",
         reduce     => "",
         persist    => "",
         reflection => "",
         followup   => "",
+
         completed  => 0,
     };
 
@@ -104,6 +155,10 @@ sub plan_entry {
 
     print "\nPlanned entry saved for $course / $period on $date.\n";
 }
+
+# --------------------------------------------------
+# REFLECT ENTRY — AFTER CLASS
+# --------------------------------------------------
 
 sub reflect_entry {
     my ($date) = @_;
@@ -140,7 +195,7 @@ sub reflect_entry {
     return if $choice < 1 || $choice > @open_entries;
 
     my $entry = $open_entries[$choice - 1];
-    
+
     print "\nPlanned Lesson\n";
     print "--------------\n";
     print "Period: $entry->{period}\n";
@@ -152,11 +207,20 @@ sub reflect_entry {
 
     print "\nAfter Class\n\n";
 
-    $entry->{engage}     = prompt("Engage — where did connection or attention happen?");
-    $entry->{reduce}     = prompt("Reduce — what could be lighter or simpler?");
-    $entry->{persist}    = prompt("Persist — what is worth continuing?");
-    $entry->{reflection} = multiline_prompt("Reflection — what actually happened?");
-    $entry->{followup}   = multiline_prompt("Follow-up / next action");
+    $entry->{engage} =
+        prompt("Engage — where did connection or attention happen?");
+
+    $entry->{reduce} =
+        prompt("Reduce — what could be lighter or simpler?");
+
+    $entry->{persist} =
+        prompt("Persist — what is worth continuing?");
+
+    $entry->{reflection} =
+        multiline_prompt("Reflection — what actually happened?");
+
+    $entry->{followup} =
+        multiline_prompt("Follow-up / next action");
 
     $entry->{completed} = 1;
 
@@ -164,6 +228,10 @@ sub reflect_entry {
 
     print "\nReflection saved for $date.\n";
 }
+
+# --------------------------------------------------
+# VIEW DAY
+# --------------------------------------------------
 
 sub view_day {
     my ($date) = @_;
@@ -204,17 +272,27 @@ sub view_day {
     }
 }
 
+# --------------------------------------------------
+# WEEKLY REFLECTION
+# --------------------------------------------------
+
 sub weekly_reflection {
     my ($date) = @_;
     my $day = load_day($date);
 
     print "\nThreshold — Weekly Reflection for $date\n\n";
-    $day->{weekly_reflection} = multiline_prompt("What changed in the room this week?");
+
+    $day->{weekly_reflection} =
+        multiline_prompt("What changed in the room this week?");
 
     save_day($day);
 
     print "\nWeekly reflection saved for $date.\n";
 }
+
+# --------------------------------------------------
+# MARKDOWN EXPORT
+# --------------------------------------------------
 
 sub export_markdown {
     my ($date) = @_;
@@ -260,10 +338,15 @@ sub export_markdown {
     print "\nExported to $out\n";
 }
 
+# --------------------------------------------------
+# MAIN MENU
+# --------------------------------------------------
+
 sub menu {
     print "\nThreshold Daybook\n";
     print "A classroom practice for noticing what changes in the room.\n\n";
     print "Working date: $date\n\n";
+
     print "1. Plan lesson entry\n";
     print "2. Reflect on lesson\n";
     print "3. View day\n";
@@ -279,6 +362,10 @@ sub menu {
     elsif ($choice eq "5") { export_markdown($date); }
     else { print "No action taken.\n"; }
 }
+
+# --------------------------------------------------
+# COMMAND ROUTING
+# --------------------------------------------------
 
 if    ($command eq "plan")    { plan_entry($date); }
 elsif ($command eq "reflect") { reflect_entry($date); }

@@ -264,3 +264,38 @@ Future versions may allow:
 
 Threshold should preserve the primacy of human reflection
 while allowing selective observational support.
+
+## Version Path
+
+### v0.6 — Real Use + Bridge Features
+Use Threshold during actual teaching and allow real classroom practice to shape the next refinements.
+
+Focus:
+- authentic teaching entries
+- small CLI refinements based on use
+- Today at a Glance
+- early config/defaults planning
+- observation/metrics layer documented but not yet central
+
+### v0.7 — Stable CLI Prototype
+Create the most consistent and usable command-line version before moving to the web.
+
+Focus:
+- clean command structure
+- stable date-aware workflow
+- consistent Markdown export
+- possible config/defaults support
+- possible bell schedule support
+- updated README and DEVELOPMENT notes
+
+### v0.8 — Web Transition
+Begin translating the proven CLI workflow into a web version.
+
+Focus:
+- Today dashboard
+- planning screen
+- reflection queue
+- day archive
+- export/sub-plan view
+- preserve the core Threshold rhythm:
+Before Class → After Class → Weekly Reflection
