@@ -31,6 +31,22 @@ sub load_day {
     return decode_json($json);
 }
 
+sub multiline_prompt {
+    my ($label) = @_;
+    
+    print "$label (finish with a single . on its own line):\n";
+    
+    my @lines;
+    
+    while (1) {
+        chomp(my $line = <STDIN>);
+        last if $line eq '.';
+        push @lines, $line;
+    }
+    
+    return join("\n", @lines);
+}
+
 sub save_day {
     my ($day) = @_;
     open my $fh, ">", $file or die "Cannot write $file: $!";
@@ -47,33 +63,53 @@ sub prompt {
 
 sub add_entry {
     my $day = load_day();
-
-    print "\nThreshold — Add Teaching Entry\n\n";
-
+    
+    print "\nThreshold — Teaching Reflection Entry\n";
+    print "-------------------------------------\n";
+    print "Before Class\n\n";
+    
+    my $period     = prompt("Period");
+    my $section    = prompt("Section / Term");
+    my $course     = prompt("Course");
+    
+    my $focus      = prompt("Lesson focus / main movement");
+    my $plan       = prompt("Basic plan / class sequence");
+    
+    my $transition = prompt("Transition moment to notice");
+    
+    print "\nAfter Class\n\n";
+    
+    my $engage     = prompt("Engage — where did connection or attention happen?");
+    my $reduce     = prompt("Reduce — what could be lighter or simpler?");
+    my $persist    = prompt("Persist — what is worth continuing?");
+    
+    my $reflection = multiline_prompt("Reflection — what actually happened?");
+    my $followup   = multiline_prompt("Follow-up / next action");
+    
     my $entry = {
         time       => localtime->hms,
         
-        period     => prompt("Period"),
-        section    => prompt("Section / Term"),
-        course     => prompt("Course"),
+        period     => $period,
+        section    => $section,
+        course     => $course,
         
-        focus      => prompt("Lesson focus / main movement"),
-        plan       => prompt("Basic plan / class sequence"),
+        focus      => $focus,
+        plan       => $plan,
         
-        transition => prompt("Transition moment to notice"),
+        transition => $transition,
         
-        engage     => prompt("Engage — where did connection or attention happen?"),
-        reduce     => prompt("Reduce — what could be lighter or simpler?"),
-        persist    => prompt("Persist — what is worth continuing?"),
+        engage     => $engage,
+        reduce     => $reduce,
+        persist    => $persist,
         
-        reflection => prompt("Reflection — what actually happened?"),
-        followup   => prompt("Follow-up / next action"),
+        reflection => $reflection,
+        followup   => $followup,
     };
-
+    
     push @{ $day->{entries} }, $entry;
     save_day($day);
-
-    print "\nSaved entry for $entry->{course} / $entry->{period}.\n";
+    
+    print "\nSaved entry for $course / $period.\n";
 }
 
 sub view_today {
@@ -99,7 +135,7 @@ sub view_today {
         print "Persist: $entry->{persist}\n";
         print "Reflection: $entry->{reflection}\n";
         print "Follow-up: $entry->{followup}\n";
-        print "-" x 40, "\n";
+        print "\n", "-" x 50, "\n\n";
     }
 }
 
